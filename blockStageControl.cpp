@@ -60,7 +60,6 @@ void DeleteBlock(char blockInfo[][4])
 	SetCurrentCursorPos(curPos.x, curPos.y);
 }
 
-
 void ChooseBlock(void)
 {
 	srand((unsigned int)time(NULL));
@@ -81,3 +80,41 @@ void BlockDown(void)
 
 	ShowBlock(blockModel[currentBlockModel]);
 }
+
+void RotateBlock()
+{
+	DeleteBlock(blockModel[currentBlockModel]);
+
+	if ((currentBlockModel + 1) % 4 == 0)
+	{
+		currentBlockModel -= 3;
+	}
+	else
+	{
+		currentBlockModel += 1;
+	}
+
+	ShowBlock(blockModel[currentBlockModel]);
+}
+
+void ShiftLeft(void)
+{
+	DeleteBlock(blockModel[currentBlockModel]);
+
+	curPosX -= 2;
+	SetCurrentCursorPos(curPosX, curPosY);
+
+	ShowBlock(blockModel[currentBlockModel]);
+}
+
+void ShiftRight(void)
+{
+	DeleteBlock(blockModel[currentBlockModel]);
+
+	curPosX += 2;
+	SetCurrentCursorPos(curPosX, curPosY);
+
+	ShowBlock(blockModel[currentBlockModel]);
+}
+
+
