@@ -10,6 +10,7 @@
 #define RIGHT 77
 #define UP 72
 #define DOWN 80
+#define SPACE 32
 
 static int keyDelayRate;
 
@@ -67,6 +68,10 @@ void ProcessKeyInput(void)
 				RotateBlock();
 				break;
 			case DOWN:
+				BlockDown();
+				break;
+			case SPACE:
+				DropBlock();
 				break;
 			}
 		}

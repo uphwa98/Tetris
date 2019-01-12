@@ -158,6 +158,24 @@ void ShiftRight(void)
 	ShowBlock(blockModel[currentBlockModel]);
 }
 
+void DropBlock(void)
+{
+	int posY = curPosY;
+
+	while (!isCollision(curPosX, posY, blockModel[currentBlockModel]))
+	{
+		posY++;
+	}
+
+	DeleteBlock(blockModel[currentBlockModel]);
+
+	curPosY = posY - 1;
+	SetCurrentCursorPos(curPosX, curPosY);
+
+	ShowBlock(blockModel[currentBlockModel]);
+}
+
+
 #if 0
 void DrawGameBoard(void)
 {

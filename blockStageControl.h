@@ -8,9 +8,10 @@ void ChooseBlock(void);
 int GetCurrentBlockIdx(void);
 
 int BlockDown(void);
-void ShiftLeft();
-void ShiftRight();
-void RotateBlock();
+void ShiftLeft(void);
+void ShiftRight(void);
+void RotateBlock(void);
+void DropBlock(void);
 
 void DrawGameBoard(void);
 int isCollision(int posX, int posY, char blockModel[][4]);
