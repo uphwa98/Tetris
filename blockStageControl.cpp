@@ -3,6 +3,8 @@
 #include "keyCurControl.h"
 #include "blockInfo.h"
 #include "blockStageControl.h"
+#include "scoreLevelControl.h"
+#include "soundEffect.h"
 
 #define GBOARD_WIDTH 10
 #define GBOARD_HEIGHT 20
@@ -72,7 +74,7 @@ void DeleteBlock(char blockInfo[][4])
 void ChooseBlock(void)
 {
 	srand((unsigned int)time(NULL));
-	currentBlockModel = (rand() % NUM_OF_BLOCK_MODEL) * 4;
+	currentBlockModel = (rand() % NUM_OF_BLOCK_MODEL) * 4; // 각 BlockModel 의 첫 번째 index
 }
 
 int GetCurrentBlockIdx(void)
@@ -82,17 +84,17 @@ int GetCurrentBlockIdx(void)
 
 int BlockDown(void)
 {
-	if (isCollision(curPosX, curPosY + 1, blockModel[currentBlockModel]))
+	if (isCollision(curPosX, curPosY + 1, blockModel[GetCurrentBlockIdx()]))
 	{
 		return 0;
 	}
 
-	DeleteBlock(blockModel[currentBlockModel]);
+	DeleteBlock(blockModel[GetCurrentBlockIdx()]);
 
 	curPosY++;
 	SetCurrentCursorPos(curPosX, curPosY);
 
-	ShowBlock(blockModel[currentBlockModel]);
+	ShowBlock(blockModel[GetCurrentBlockIdx()]);
 
 	return 1;
 }
@@ -239,9 +241,9 @@ void DrawGameBoard(void)
 		SetCurrentCursorPos(GBOARD_ORIGIN_X, GBOARD_ORIGIN_Y + y);
 
 		if (y == GBOARD_HEIGHT)
-			printf("└");
+			printf("□");  //printf("┘");
 		else
-			puts("│");
+			puts("□");  //puts("│");
 	}
 
 	for (y = 0; y <= GBOARD_HEIGHT; y++)
@@ -249,23 +251,22 @@ void DrawGameBoard(void)
 		SetCurrentCursorPos(GBOARD_ORIGIN_X + (GBOARD_WIDTH + 1) * 2, GBOARD_ORIGIN_Y + y);
 
 		if (y == GBOARD_HEIGHT)
-			printf("┘");
+			printf("□"); //printf("┘");
 		else
-			puts("│");
+			puts("□"); //puts("│");
 	}
 
-	for (x = 1; x <= GBOARD_WIDTH; x++)
+	for (x = 1; x < GBOARD_WIDTH + 1; x++)
 	{
 		SetCurrentCursorPos(GBOARD_ORIGIN_X + x * 2, GBOARD_ORIGIN_Y + GBOARD_HEIGHT);
-		printf("─");
+		printf("□"); //printf("─");
 	}
-
-
 
 	SetCurrentCursorPos(0, 0);
 
+
 	// 양쪽 벽
-	for (y = 0; y <= GBOARD_HEIGHT; y++)
+	for (y = 0; y < GBOARD_HEIGHT; y++)
 	{
 		// 왼쪽
 		gameBoardInfo[y][0] = 1;
@@ -283,7 +284,7 @@ void DrawGameBoard(void)
 
 int isCollision(int posX, int posY, char blockModel[][4])
 {
-	int tempX = (posX - GBOARD_ORIGIN_X) / 2;
+	int tempX = (posX - GBOARD_ORIGIN_X) / 2; // 븍럭이 2칸을 차지하기 때문
 	int tempY = posY - GBOARD_ORIGIN_Y;
 
 	for (int y = 0; y < 4; y++)
@@ -300,25 +301,73 @@ int isCollision(int posX, int posY, char blockModel[][4])
 	return 0;
 }
 
+void removeLine(int index)
+{
+	for (int y = index; y > 0; y--)
+	{
+		int posY = GBOARD_ORIGIN_Y + y;
+		SetCurrentCursorPos(GBOARD_ORIGIN_X + 2, posY);
+
+		for (int x = 1; x <= GBOARD_WIDTH; x++)
+		{
+			gameBoardInfo[y][x] = gameBoardInfo[y - 1][x];
+
+			if (gameBoardInfo[y][x] == 1)
+				printf("■");
+			else
+				printf("  ");
+		}
+	}
+
+	for (int x = 1; x <= GBOARD_WIDTH; x++)
+	{
+		gameBoardInfo[0][x] = 0;
+	}
+}
+
 void AddCurrentBlockInfoToBoard(void)
 {
 	int x;
 	int y;
 
-	int arrCurX;
-	int arrCurY;
+	int arrCurX = (curPosX - GBOARD_ORIGIN_X) / 2;
+	int arrCurY = curPosY - GBOARD_ORIGIN_Y;
 
 	for (int y = 0; y < 4; y++)
 	{
 		for (int x = 0; x < 4; x++)
 		{
-			int tempX = (curPosX - GBOARD_ORIGIN_X) / 2;
-			int tempY = curPosY - GBOARD_ORIGIN_Y;
-
 			if (blockModel[currentBlockModel][y][x] == 1)
 			{
-				gameBoardInfo[tempY + y][tempX + x] = 1;
+				gameBoardInfo[arrCurY + y][arrCurX + x] = 1;
 			}
+		}
+	}
+
+	y = 3;
+	while (arrCurY + y >= GBOARD_HEIGHT)
+	{
+		y--;
+
+	}
+
+	for (int i = 0; i < 4 && y >= 0; i++)
+	{
+		for (x = 1; x <= GBOARD_WIDTH; x++)
+		{
+			if (gameBoardInfo[arrCurY + y][x] == 0)
+				break;
+		}
+
+		if (x == GBOARD_WIDTH + 1 && gameBoardInfo[arrCurY + y][GBOARD_WIDTH] == 1)
+		{
+			removeLine(arrCurY + y);
+			UpdateScore();
+			PlayRemoveEffect();
+		}
+		else
+		{
+			y--;
 		}
 	}
 }

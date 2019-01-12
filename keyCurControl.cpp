@@ -2,6 +2,7 @@
 #include "common.h"
 #include "point.h"
 #include "blockStageControl.h"
+#include "soundEffect.h"
 
 #define KEY_SENSITIVE 100
 #define SYS_DELAY 20
@@ -72,6 +73,7 @@ void ProcessKeyInput(void)
 				break;
 			case SPACE:
 				DropBlock();
+				PlaySpaceEffect();
 				break;
 			}
 		}
@@ -89,4 +91,9 @@ void InitKeyDelayRate(int rate)
 		return;
 
 	keyDelayRate = rate;
+}
+
+void UpdateKeyDelayRate(void)
+{
+	keyDelayRate++;
 }
