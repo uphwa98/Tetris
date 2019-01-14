@@ -47,7 +47,7 @@ void SetCurrentCursorPos(int x, int y)
 	SetConsoleCursorPosition(hConsoleOut, pos);
 }
 
-void ProcessKeyInput(void)
+int ProcessKeyInput(void)
 {
 	int i;
 	int key;
@@ -74,6 +74,7 @@ void ProcessKeyInput(void)
 			case SPACE:
 				DropBlock();
 				PlaySpaceEffect();
+				return 1;
 				break;
 			}
 		}
@@ -83,6 +84,8 @@ void ProcessKeyInput(void)
 			Sleep(SYS_DELAY);
 		}
 	}
+
+	return 0;
 }
 
 void InitKeyDelayRate(int rate)
