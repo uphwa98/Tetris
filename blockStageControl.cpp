@@ -361,9 +361,9 @@ void AddCurrentBlockInfoToBoard(void)
 
 		if (x == GBOARD_WIDTH + 1 && gameBoardInfo[arrCurY + y][GBOARD_WIDTH] == 1)
 		{
+			PlayRemoveEffect();
 			removeLine(arrCurY + y);
 			UpdateScore();
-			PlayRemoveEffect();
 		}
 		else
 		{

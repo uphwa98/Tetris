@@ -4,4 +4,15 @@
 void PlaySpaceEffect(void);
 void PlayRemoveEffect(void);
 
+void InitSound(void);
+
+
+void PlayBGM(void);
+
+
+void StopBGM(void);
+
+
+void SoundRelease(void);
+void UpdateSound(void);
 #endif

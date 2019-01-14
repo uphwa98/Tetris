@@ -72,8 +72,8 @@ int ProcessKeyInput(void)
 				BlockDown();
 				break;
 			case SPACE:
+				//PlaySpaceEffect();
 				DropBlock();
-				PlaySpaceEffect();
 				return 1;
 				break;
 			}
