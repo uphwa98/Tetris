@@ -2,11 +2,11 @@
 #include "keyCurControl.h"
 
 static int gameLevel = 0;
-static int gameScore = -10;
+static int gameScore = -20;
 
 void UpdateLevel(void)
 {
-	SetCurrentCursorPos(30, 4);
+	SetCurrentCursorPos(30, 5);
 
 	gameLevel++;
 	printf("§ 현재 레벨: %d  §", gameLevel);
@@ -15,9 +15,9 @@ void UpdateLevel(void)
 
 void UpdateScore(void)
 {
-	SetCurrentCursorPos(30, 7);
+	SetCurrentCursorPos(30, 8);
 
-	gameScore += 10;
+	gameScore += 20;
 	printf("§ 현재 점수: %d  §", gameScore);
 
 	if (gameScore != 0 && gameScore % 100 == 0)

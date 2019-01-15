@@ -14,7 +14,8 @@
 
 static int gameBoardInfo[GBOARD_HEIGHT + 1][GBOARD_WIDTH + 2] = { 0, }; // 1 더한 것은 아랫쪽 벽, 2 더한 것은 양쪽 벽을 나타냄.
 
-static int currentBlockModel;
+static int currentBlockModel = -1;
+static int nextBlockModel;
 static int curPosX;
 static int curPosY;
 
@@ -73,8 +74,44 @@ void DeleteBlock(char blockInfo[][4])
 
 void ChooseBlock(void)
 {
+	if (currentBlockModel == -1)
+	{
+		srand((unsigned int)time(NULL));
+		currentBlockModel = (rand() % NUM_OF_BLOCK_MODEL) * 4; // 각 BlockModel 의 첫 번째 index
+	}
+	else
+	{
+		currentBlockModel = nextBlockModel;
+	}
+
 	srand((unsigned int)time(NULL));
-	currentBlockModel = (rand() % NUM_OF_BLOCK_MODEL) * 4; // 각 BlockModel 의 첫 번째 index
+	nextBlockModel = (rand() % NUM_OF_BLOCK_MODEL) * 4; // 각 BlockModel 의 첫 번째 index
+}
+
+void DeleteNextBlock()
+{
+	int y, x;
+
+	point curPos = GetCurrentCursorPos();
+
+	for (y = 0; y < 4; y++)
+	{
+		for (x = 0; x < 4; x++)
+		{
+			SetCurrentCursorPos(curPos.x + (x * 2), curPos.y + y);
+			printf("  ");
+		}
+	}
+	SetCurrentCursorPos(curPos.x, curPos.y);
+}
+
+void ShowNextBlock(void)
+{
+	SetCurrentCursorPos(30, 1);
+
+	DeleteNextBlock();
+
+	ShowBlock(blockModel[nextBlockModel]);
 }
 
 int GetCurrentBlockIdx(void)
@@ -177,60 +214,6 @@ void DropBlock(void)
 	ShowBlock(blockModel[currentBlockModel]);
 }
 
-
-#if 0
-void DrawGameBoard(void)
-{
-	int x;
-	int y;
-
-	SetCurrentCursorPos(GBOARD_ORIGIN_X, GBOARD_ORIGIN_Y);
-
-
-	for (y = 0; y < GBOARD_HEIGHT; y++)
-	{
-		puts("│");
-		SetCurrentCursorPos(GBOARD_ORIGIN_X, GBOARD_ORIGIN_Y + y);
-	}
-	printf("└");
-
-	for (x = 1; x <= GBOARD_WIDTH; x++)
-	{
-		printf("─");
-		//SetCurrentCursorPos(GBOARD_ORIGIN_X + x * 2, GBOARD_ORIGIN_Y + GBOARD_HEIGHT - 1);
-		//printf("─");
-	}
-
-	int tempX = GBOARD_ORIGIN_X + GBOARD_WIDTH * 2 + 2;
-	SetCurrentCursorPos(tempX, GBOARD_ORIGIN_Y);
-
-	for (y = 0; y < GBOARD_HEIGHT; y++)
-	{
-		puts("│");
-		SetCurrentCursorPos(tempX, GBOARD_ORIGIN_Y + y);
-	}
-	printf("┘");
-
-	SetCurrentCursorPos(0, 0);
-
-	// 양쪽 벽
-	for (y = 0; y <= GBOARD_HEIGHT; y++)
-	{
-		// 왼쪽
-		gameBoardInfo[y][0] = 1;
-		
-		// 오른쪽
-		gameBoardInfo[y][GBOARD_WIDTH + 1] = 1;
-	}
-
-	// 아랫쪽 벽
-	for (x = 0; x < GBOARD_WIDTH + 2; x++)
-	{
-		gameBoardInfo[GBOARD_HEIGHT][x] = 1;
-	}
-}
-#endif
-
 void DrawGameBoard(void)
 {
 	int x;
@@ -241,9 +224,9 @@ void DrawGameBoard(void)
 		SetCurrentCursorPos(GBOARD_ORIGIN_X, GBOARD_ORIGIN_Y + y);
 
 		if (y == GBOARD_HEIGHT)
-			printf("□");  //printf("┘");
+			printf("▧");  //printf("┘");
 		else
-			puts("□");  //puts("│");
+			puts("▧");  //puts("│");
 	}
 
 	for (y = 0; y <= GBOARD_HEIGHT; y++)
@@ -251,15 +234,15 @@ void DrawGameBoard(void)
 		SetCurrentCursorPos(GBOARD_ORIGIN_X + (GBOARD_WIDTH + 1) * 2, GBOARD_ORIGIN_Y + y);
 
 		if (y == GBOARD_HEIGHT)
-			printf("□"); //printf("┘");
+			printf("▧"); //printf("┘");
 		else
-			puts("□"); //puts("│");
+			puts("▧"); //puts("│");
 	}
 
 	for (x = 1; x < GBOARD_WIDTH + 1; x++)
 	{
 		SetCurrentCursorPos(GBOARD_ORIGIN_X + x * 2, GBOARD_ORIGIN_Y + GBOARD_HEIGHT);
-		printf("□"); //printf("─");
+		printf("▧"); //printf("─");
 	}
 
 	SetCurrentCursorPos(0, 0);
@@ -364,6 +347,7 @@ void AddCurrentBlockInfoToBoard(void)
 			PlayRemoveEffect();
 			removeLine(arrCurY + y);
 			UpdateScore();
+			Sleep(500);
 		}
 		else
 		{

@@ -5,6 +5,7 @@ void InitNewBlockPos(int x, int y);
 void ShowBlock(char blockInfo[][4]);
 void DeleteBlock(char blockInfo[][4]);
 void ChooseBlock(void);
+void ShowNextBlock(void);
 int GetCurrentBlockIdx(void);
 
 int BlockDown(void);
