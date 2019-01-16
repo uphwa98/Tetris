@@ -308,8 +308,32 @@ void removeLine(int index)
 	}
 }
 
+int cal_score(int removeCount)
+{
+	int score;
+	switch (removeCount)
+	{
+	case 0:
+	case 1:
+		score = 0;
+		break;
+	case 2:
+		score = 20;
+		break;
+	case 3:
+		score = 30;
+		break;
+	case 4:
+		score = 60;
+		break;
+	}
+
+	return score;
+}
+
 void AddCurrentBlockInfoToBoard(void)
 {
+	int extra_score = 0;
 	int x;
 	int y;
 
@@ -344,9 +368,11 @@ void AddCurrentBlockInfoToBoard(void)
 
 		if (x == GBOARD_WIDTH + 1 && gameBoardInfo[arrCurY + y][GBOARD_WIDTH] == 1)
 		{
+			extra_score++;
+
 			PlayRemoveEffect();
 			removeLine(arrCurY + y);
-			UpdateScore();
+			UpdateScore(10);
 			Sleep(500);
 		}
 		else
@@ -354,6 +380,8 @@ void AddCurrentBlockInfoToBoard(void)
 			y--;
 		}
 	}
+
+	UpdateScore(cal_score(extra_score));
 }
 
 int IsGameOver(void)

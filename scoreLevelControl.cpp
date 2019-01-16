@@ -1,8 +1,10 @@
 #include "common.h"
 #include "keyCurControl.h"
 
+#define LEVEL_UP_SCORE_DIFF 100
+
 static int gameLevel = 0;
-static int gameScore = -20;
+static int gameScore = 0;
 
 void UpdateLevel(void)
 {
@@ -13,14 +15,14 @@ void UpdateLevel(void)
 
 }
 
-void UpdateScore(void)
+void UpdateScore(int score)
 {
 	SetCurrentCursorPos(30, 8);
 
-	gameScore += 20;
+	gameScore += score;
 	printf("§ 현재 점수: %d  §", gameScore);
 
-	if (gameScore != 0 && gameScore % 100 == 0)
+	if (gameScore >= gameLevel * LEVEL_UP_SCORE_DIFF)
 	{
 		UpdateLevel();
 		UpdateKeyDelayRate();
