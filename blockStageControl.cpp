@@ -5,6 +5,7 @@
 #include "blockStageControl.h"
 #include "scoreLevelControl.h"
 #include "soundEffect.h"
+#include "color.h"
 
 #define GBOARD_WIDTH 10
 #define GBOARD_HEIGHT 20
@@ -72,6 +73,27 @@ void DeleteBlock(char blockInfo[][4])
 	SetCurrentCursorPos(curPos.x, curPos.y);
 }
 
+int GetBlockColor(int model)
+{
+	switch (model)
+	{
+	case 0:
+		return 12;
+	case 4:
+		return 9;
+	case 8:
+		return 11;
+	case 12:
+		return 2;
+	case 16:
+		return 14;
+	case 20:
+		return 12;
+	case 24:
+		return 13;
+	}
+}
+
 void ChooseBlock(void)
 {
 	if (currentBlockModel == -1)
@@ -86,6 +108,8 @@ void ChooseBlock(void)
 
 	srand((unsigned int)time(NULL));
 	nextBlockModel = (rand() % NUM_OF_BLOCK_MODEL) * 4; // 각 BlockModel 의 첫 번째 index
+
+	SetConsoleTextColor(GetBlockColor(currentBlockModel));
 }
 
 void DeleteNextBlock()
@@ -111,7 +135,9 @@ void ShowNextBlock(void)
 
 	DeleteNextBlock();
 
+	SetConsoleTextColor(GetBlockColor(nextBlockModel));
 	ShowBlock(blockModel[nextBlockModel]);
+	RestoreTextColor();
 }
 
 int GetCurrentBlockIdx(void)
@@ -219,6 +245,8 @@ void DrawGameBoard(void)
 	int x;
 	int y;
 
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
+
 	for (y = 0; y <= GBOARD_HEIGHT; y++)
 	{
 		SetCurrentCursorPos(GBOARD_ORIGIN_X, GBOARD_ORIGIN_Y + y);
@@ -244,6 +272,7 @@ void DrawGameBoard(void)
 		SetCurrentCursorPos(GBOARD_ORIGIN_X + x * 2, GBOARD_ORIGIN_Y + GBOARD_HEIGHT);
 		printf("▧"); //printf("─");
 	}
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 
 	SetCurrentCursorPos(0, 0);
 
